@@ -23,13 +23,19 @@ async def read_json(file_path, encoding='utf-8'):
 async def create_incomes_excel(incomes_data, all_incomes_data):
 
     date_now = datetime.now().strftime("%d.%m.%Y %H:%M")
+
     directory = "excel_files"
     filename = "Поставки.xlsx"
     file_path = os.path.join(directory, filename)
+
     if not os.path.exists(file_path):
         os.makedirs(directory, exist_ok=False)
+
+
     wb = Workbook()
     wb.remove(wb.active)
+
+    '''Create full stat sheet'''
     ws = wb.create_sheet(title='Полная статистика поставок')
     ws['A1'] = 'Артикул'
     ws['B1'] = 'Количество'
@@ -49,6 +55,8 @@ async def create_incomes_excel(incomes_data, all_incomes_data):
     ws[f'B{row+1}'].font = Font(bold=True)
     ws.column_dimensions['A'].width = 25
     ws.column_dimensions['B'].width = 15
+
+    ''' Create stat by stock'''
     for warehouse in incomes_data:
         ws = wb.create_sheet(title=warehouse['warehouseName'])
 
@@ -69,6 +77,3 @@ async def create_incomes_excel(incomes_data, all_incomes_data):
         ws[f'B{max_row}'].font = Font(bold=True)
 
     wb.save(file_path)
-
-
-
